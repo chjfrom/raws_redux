@@ -3,28 +3,28 @@ const { createStore } = require('redux');
 const reducer = (prevState, action) => {
     // 새로운 state 만들어주기 (불변성 유지)
     // prevState 이전값
-    // action dispatch 후 전달된 값이 action에 들어가 음
+    // action dispatch 후 전달된 값이 action에 들어감
     // ... 전개구문 https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax
     // 전개 연산자(Spread Operator)란 객체나 배열의 값을 하나 하나 넘기는 용도로 사용할 수 있다. 
     // console.log('prevState')
     // console.log(prevState)
     switch (action.type) {
-        case 'CHANGE_TYPE1':
+        case 'LOG_IN':
         return {
         ...prevState,
-        change1: action.data,
+        user: action.data,
     };
-        case 'CHANGE_TYPE2':
+        case 'LOG_OUT':
         return {
         ...prevState,
-        change2: action.data,
+        user: null,
     };
-        case 'CHANGE_TYPE3':
+    case 'ADD_POST':
         return {
         ...prevState,
-        change3: action.data,
+        posts: [...prevState.posts, action.data],
     };
-        //  type 오타가 발생되면 default 조건문을 통과한다.
+        // type 오타가 발생되면 default 조건문을 통과한다.
         default:
         return prevState;
     }
@@ -32,9 +32,8 @@ const reducer = (prevState, action) => {
 
 // store 초기값
 const initialState = {
-  change1: 'text',
-  change2: 100,
-  change3: null,
+  user: null,
+  posts: [],
 };
 
 // store 생성
@@ -45,43 +44,49 @@ store.subscribe(() => { // react-redux 안에 들어있어요.
     // console.log('changed'); // 화면 바꿔주는 코드 여기서
 });
 
-console.log('1 콘솔값', store.getState());
+console.log('getState', store.getState());
 
 //action 생성함수
-const changechange1 = (data) => {
+const login = (data) => {
   return { // action
-    type: 'CHANGE_TYPE1',
+    type: 'LOG_IN',
     data,
   };
-
-
-
-  
 };
-//action 생성함수
-const changechange2 = (data) => {
+
+const logOut = () => {
     return { // action
-        type: 'CHANGE_TYPE2',
-        data,
-    };
-};
-//action 생성함수
-const changechange3 = (data) => {
-    return { // action
-        type: 'CHANGE_TYPE3',
-        data,
+        type: 'LOG_OUT',
     };
 };
 
-// 기본 action 처리 방법
-// store.dispatch({
-//   type: 'CHANGE_TYPE1',
-//   data: 'success',
-// });
+const addPost = (data) => {
+    return { // action
+        type: 'ADD_POST',
+        data
+    };
+};
+
 
 // dispatch 전달
-store.dispatch(changechange1('success'));
-store.dispatch(changechange2(0));
-store.dispatch(changechange3({object:'객체'}));
+store.dispatch(login({
+    id:1,
+    name: 'hcjfrom',
+    admin: true
+}));
 
-console.log('2 콘솔값', store.getState());
+
+console.log('login', store.getState());
+
+store.dispatch(addPost({
+    userId:1,
+    id:1,
+    contents: '리덕스 연습하기',
+}));
+
+console.log('addPost', store.getState());
+
+store.dispatch(logOut());
+
+console.log('logOut', store.getState());
+
